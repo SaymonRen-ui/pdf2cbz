@@ -1,0 +1,95 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Light Theme Colors -->
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#E0E0E0" />
+    
+    <SolidColorBrush x:Key="SurfaceBackgroundBrush" Color="#FAFAFA" />
+    <SolidColorBrush x:Key="SurfaceBorderBrush" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#F0F0F0" />
+    
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ControlBorderBrush" Color="#D0D0D0" />
+    <SolidColorBrush x:Key="ControlHoverBrush" Color="#F5F5F5" />
+    <SolidColorBrush x:Key="ControlPressedBrush" Color="#EBEBEB" />
+    <SolidColorBrush x:Key="ControlDisabledBrush" Color="#F5F5F5" />
+    <SolidColorBrush x:Key="ControlDisabledBorderBrush" Color="#E0E0E0" />
+    
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="PrimaryHoverBrush" Color="{StaticResource PrimaryHoverColor}" />
+    <SolidColorBrush x:Key="PrimaryPressedBrush" Color="{StaticResource PrimaryPressedColor}" />
+    <SolidColorBrush x:Key="PrimaryDisabledBrush" Color="{StaticResource PrimaryDisabledColor}" />
+    <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="#FFFFFF" />
+    
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}" />
+    <SolidColorBrush x:Key="SecondaryHoverBrush" Color="{StaticResource SecondaryHoverColor}" />
+    <SolidColorBrush x:Key="SecondaryPressedBrush" Color="{StaticResource SecondaryPressedColor}" />
+    <SolidColorBrush x:Key="SecondaryBorderBrush" Color="{StaticResource SecondaryBorderColor}" />
+    <SolidColorBrush x:Key="SecondaryHoverBorderBrush" Color="{StaticResource SecondaryHoverBorderColor}" />
+    <SolidColorBrush x:Key="SecondaryDisabledBrush" Color="{StaticResource SecondaryDisabledColor}" />
+    <SolidColorBrush x:Key="SecondaryDisabledBorderBrush" Color="{StaticResource SecondaryDisabledBorderColor}" />
+    <SolidColorBrush x:Key="SecondaryForegroundBrush" Color="#333333" />
+    
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="DangerHoverBrush" Color="{StaticResource DangerHoverColor}" />
+    <SolidColorBrush x:Key="DangerPressedBrush" Color="{StaticResource DangerPressedColor}" />
+    <SolidColorBrush x:Key="DangerDisabledBrush" Color="{StaticResource DangerDisabledColor}" />
+    <SolidColorBrush x:Key="DangerForegroundBrush" Color="#FFFFFF" />
+    
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="SuccessForegroundBrush" Color="#FFFFFF" />
+    
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1A1A1A" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#666666" />
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#999999" />
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="#B0B0B0" />
+    <SolidColorBrush x:Key="TextOnPrimaryBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="TextOnDarkBrush" Color="#FFFFFF" />
+    
+    <SolidColorBrush x:Key="FocusBrush" Color="{StaticResource FocusColor}" />
+    <SolidColorBrush x:Key="FocusBorderBrush" Color="{StaticResource FocusBorderColor}" />
+    
+    <SolidColorBrush x:Key="SelectionBrush" Color="#E8F0FE" />
+    <SolidColorBrush x:Key="SelectionBorderBrush" Color="#D0E0F8" />
+    <SolidColorBrush x:Key="SelectionForegroundBrush" Color="#1A1A1A" />
+    
+    <SolidColorBrush x:Key="ProgressBackgroundBrush" Color="#E8E8E8" />
+    <SolidColorBrush x:Key="ProgressForegroundBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="ProgressCurrentForegroundBrush" Color="{StaticResource SuccessColor}" />
+    
+    <SolidColorBrush x:Key="SliderTrackBrush" Color="#D0D0D0" />
+    <SolidColorBrush x:Key="SliderThumbBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="SliderThumbHoverBrush" Color="{StaticResource PrimaryHoverColor}" />
+    <SolidColorBrush x:Key="SliderThumbPressedBrush" Color="{StaticResource PrimaryPressedColor}" />
+    
+    <SolidColorBrush x:Key="ScrollBarBackgroundBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#B0B0B0" />
+    <SolidColorBrush x:Key="ScrollBarThumbHoverBrush" Color="#909090" />
+    <SolidColorBrush x:Key="ScrollBarThumbPressedBrush" Color="#707070" />
+    
+    <SolidColorBrush x:Key="GroupBoxHeaderBrush" Color="#333333" />
+    <SolidColorBrush x:Key="GroupBoxBorderBrush" Color="#E0E0E0" />
+    
+    <SolidColorBrush x:Key="ListBoxBackgroundBrush" Color="#FAFAFA" />
+    <SolidColorBrush x:Key="ListBoxBorderBrush" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="ListBoxItemHoverBrush" Color="#F0F0F0" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedBrush" Color="#E8F0FE" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedBorderBrush" Color="#D0E0F8" />
+    
+    <SolidColorBrush x:Key="DropShadowBrush" Color="#1A000000" />
+    
+    <SolidColorBrush x:Key="OverlayBrush" Color="{StaticResource OverlayColor}" />
+    
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource PrimaryColor}" />
+    
+    <SolidColorBrush x:Key="DividerBrush" Color="#E0E0E0" />
+
+</ResourceDictionary>

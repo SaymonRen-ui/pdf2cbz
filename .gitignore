@@ -1,0 +1,9 @@
+# Build
+bin/
+obj/
+TestResults/
+
+# Visual Studio
+.vs/
+*.user
+*.suo

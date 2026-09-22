@@ -1,0 +1,268 @@
+<controls:CustomWindow x:Class="PDF2CBZ.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PDF2CBZ"
+        xmlns:controls="clr-namespace:PDF2CBZ.Controls"
+        mc:Ignorable="d"
+        Title="PDF2CBZ" Height="600" Width="900"
+        MinHeight="500" MinWidth="700"
+        WindowTitle="PDF2CBZ"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        AllowDrop="True" Drop="Window_Drop">
+    
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock x:Name="AppTitleText" Text="PDF2CBZ" FontSize="{StaticResource FontSizeTitle}" 
+                            FontWeight="{StaticResource FontWeightSemiBold}" 
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            VerticalAlignment="Center"/>
+                <TextBlock Text="Конвертер PDF в CBZ" FontSize="{StaticResource FontSizeSubtitle}" 
+                            Foreground="{DynamicResource TextSecondaryBrush}" 
+                            VerticalAlignment="Center" Margin="12,0,0,0"/>
+                <TextBlock x:Name="FileCountText" Text="Добавлено файлов: 0" 
+                            FontSize="{StaticResource FontSizeNormal}" 
+                            Foreground="{DynamicResource TextSecondaryBrush}" 
+                            VerticalAlignment="Center" Margin="12,0,0,0"/>
+            </StackPanel>
+            <Button x:Name="ThemeButton" Grid.Column="1"
+                    Width="36" Height="36" Padding="0"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource SecondaryButtonStyle}"
+                    Click="ThemeButton_Click">
+                <TextBlock x:Name="ThemeButtonIcon" Text="☾" FontSize="16"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Margin="0,0,0,2"/>
+            </Button>
+            <Popup x:Name="ThemePopup"
+                   PlacementTarget="{Binding ElementName=ThemeButton}"
+                   Placement="Bottom"
+                   StaysOpen="False"
+                   AllowsTransparency="True"
+                   PopupAnimation="Fade">
+                <Border Background="{DynamicResource SurfaceBackgroundBrush}"
+                        BorderBrush="{DynamicResource SurfaceBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="4"
+                        MinWidth="170"
+                        Effect="{StaticResource DropShadowEffect}">
+                    <ListBox x:Name="ThemeListBox"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             FontFamily="{StaticResource DefaultFontFamily}"
+                             FontSize="{StaticResource FontSizeNormal}"
+                             FontWeight="{StaticResource FontWeightMedium}"
+                             Style="{StaticResource ModernListBoxStyle}"
+                             ItemContainerStyle="{StaticResource ModernListBoxItemStyle}"
+                             SelectionChanged="ThemeListBox_SelectionChanged">
+                        <ListBoxItem Tag="Light">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="☀" Width="22" TextAlignment="Center"/>
+                                <TextBlock Text="Светлая"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem Tag="Dark">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="☾" Width="22" TextAlignment="Center"/>
+                                <TextBlock Text="Тёмная"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                        <ListBoxItem Tag="System">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="◑" Width="22" TextAlignment="Center"/>
+                                <TextBlock Text="Системная"/>
+                            </StackPanel>
+                        </ListBoxItem>
+                    </ListBox>
+                </Border>
+            </Popup>
+        </Grid>
+        
+        <!-- File List -->
+<GroupBox Grid.Row="1" Header="Файлы для конвертации" Margin="0,0,0,16" Padding="8"
+                  Style="{StaticResource ModernGroupBoxStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <Grid>
+                    <ListBox x:Name="FilesListBox" 
+                             SelectionMode="Extended"
+                             AllowDrop="True"
+                             Drop="FilesListBox_Drop"
+                             DragEnter="FilesListBox_DragEnter"
+                             DragOver="FilesListBox_DragOver"
+                             Style="{StaticResource ModernListBoxStyle}"
+                             ItemContainerStyle="{StaticResource ModernListBoxItemStyle}"
+                             FontSize="{StaticResource FontSizeNormal}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="4,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="📄" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding PageCount, StringFormat='{}{0} стр.'}" 
+                                               Foreground="{DynamicResource TextTertiaryBrush}" FontSize="{StaticResource FontSizeSmall}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock x:Name="EmptyStateText"
+                               Text="Перетащите PDF-файлы сюда&#x0a;или нажмите «Добавить PDF»"
+                               FontSize="{StaticResource FontSizeNormal}"
+                               Foreground="{DynamicResource TextTertiaryBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               Margin="16"
+                               Visibility="Collapsed"/>
+                </Grid>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,0" HorizontalAlignment="Right">
+                    <Button Content="Добавить PDF" Style="{StaticResource SecondaryButtonStyle}" 
+                            Click="AddFiles_Click" Padding="12,6" Margin="0,0,8,0"/>
+                    <Button Content="Удалить" Style="{StaticResource DangerButtonStyle}" 
+                            Click="RemoveFiles_Click" Padding="12,6" Margin="0,0,8,0"/>
+                    <Button Content="Очистить список" Style="{StaticResource SecondaryButtonStyle}" 
+                            Click="ClearList_Click" Padding="12,6"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        
+        <!-- Settings -->
+        <GroupBox Grid.Row="2" Header="Настройки" Margin="0,0,0,16" Padding="8"
+                  Style="{StaticResource ModernGroupBoxStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Папка назначения:" 
+                           VerticalAlignment="Center" Margin="0,0,12,8"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="OutputPathTextBox" 
+                         VerticalAlignment="Center" Margin="0,0,8,8" FontSize="{StaticResource FontSizeNormal}" 
+                         Padding="{StaticResource SmallControlPadding}"
+                         Style="{StaticResource ModernTextBoxStyle}"
+                         TextChanged="OutputPathTextBox_TextChanged"/>
+                <Button Grid.Row="0" Grid.Column="2" Content="Обзор..." Style="{StaticResource SecondaryButtonStyle}" 
+                        Click="BrowseOutput_Click" Padding="12,4" Margin="0,0,0,8"/>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="JPEG Quality:" 
+                           VerticalAlignment="Center" Margin="0,0,12,0"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <Slider Grid.Row="1" Grid.Column="1" x:Name="QualitySlider" Minimum="1" Maximum="100" 
+                        Value="90" SmallChange="1" LargeChange="10" IsSnapToTickEnabled="False"
+                        VerticalAlignment="Center" Margin="0,0,10,0"
+                        Style="{StaticResource ModernSliderStyle}"
+                        ValueChanged="QualitySlider_ValueChanged"/>
+                <TextBlock Grid.Row="1" Grid.Column="2" x:Name="QualityValueText" Text="90" 
+                            VerticalAlignment="Center" FontWeight="{StaticResource FontWeightSemiBold}" Width="36" TextAlignment="Right"
+                            Foreground="{DynamicResource TextPrimaryBrush}"/>
+            </Grid>
+        </GroupBox>
+        
+        <!-- Progress -->
+        <GroupBox Grid.Row="3" Header="Прогресс" Margin="0,0,0,16" Padding="8"
+                  Style="{StaticResource ModernGroupBoxStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Overall progress summary -->
+                <Grid Grid.Row="0" Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="OverallProgressText" Text="Готов к работе" FontSize="{StaticResource FontSizeNormal}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Grid.Column="1" x:Name="OverallPercentText" Text="0%" FontSize="{StaticResource FontSizeNormal}" 
+                               FontWeight="{StaticResource FontWeightMedium}" Foreground="{DynamicResource PrimaryBrush}"/>
+                </Grid>
+                <ProgressBar Grid.Row="1" x:Name="OverallProgressBar" Height="8" 
+                             Minimum="0" Maximum="100" Value="0"
+                             Style="{StaticResource ModernProgressBarStyle}"/>
+                
+                <!-- Time summary -->
+                <Grid Grid.Row="2" Margin="0,8,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="TimeSummaryText" Text="" FontSize="{StaticResource FontSizeSmall}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </Grid>
+                
+                <!-- Current file progress -->
+                <Grid Grid.Row="3" Margin="0,8,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="CurrentFileProgressText" Text="" FontSize="{StaticResource FontSizeNormal}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Grid.Column="1" x:Name="CurrentFilePercentText" Text="" FontSize="{StaticResource FontSizeNormal}" 
+                               FontWeight="{StaticResource FontWeightMedium}" Foreground="{DynamicResource PrimaryBrush}"/>
+                </Grid>
+                <ProgressBar Grid.Row="4" x:Name="CurrentFileProgressBar" Height="8" 
+                             Minimum="0" Maximum="100" Value="0"
+                             Style="{StaticResource ModernProgressBarStyle}"/>
+                
+                <!-- ETA / Time remaining -->
+                <Grid Grid.Row="5" Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="ETASummaryText" Text="" FontSize="{StaticResource FontSizeSmall}"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </Grid>
+            </Grid>
+        </GroupBox>
+        
+        <!-- Action Buttons -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="CancelButton" Content="Отмена" Style="{StaticResource SecondaryButtonStyle}" 
+                    Click="Cancel_Click" Padding="{StaticResource LargeControlPadding}" Margin="0,0,8,0" IsEnabled="False"/>
+            <Button x:Name="StartButton" Content="Начать конвертацию" Style="{StaticResource PrimaryButtonStyle}" 
+                    Click="Start_Click" Padding="{StaticResource LargeControlPadding}" IsEnabled="False"/>
+        </StackPanel>
+    </Grid>
+</controls:CustomWindow>
