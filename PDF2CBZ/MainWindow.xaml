@@ -14,7 +14,8 @@
         Foreground="{DynamicResource TextPrimaryBrush}"
         AllowDrop="True" Drop="Window_Drop">
     
-    <Grid Margin="12">
+    <ScrollViewer Margin="12,12,12,12" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Список фиксированной высоты: не тянется за окном -->
@@ -287,4 +288,5 @@
                     Click="Start_Click" Padding="{StaticResource LargeControlPadding}" IsEnabled="False"/>
         </StackPanel>
     </Grid>
+    </ScrollViewer>
 </controls:CustomWindow>
