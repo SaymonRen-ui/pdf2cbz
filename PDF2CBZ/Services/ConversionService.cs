@@ -111,6 +111,8 @@ public class ConversionService : IDisposable
                 // Replace: continue to overwrite
             }
 
+            int fileMinDpi = settings.RenderDpi;
+
             try
             {
                 pdfRenderer.Load(pdfFile);
@@ -129,6 +131,8 @@ public class ConversionService : IDisposable
                     string pageFileName = FileNameHelper.GetPageFileName(page + 1, pageCount);
 
                     using var bitmap = pdfRenderer.RenderPage(page, settings.RenderDpi);
+                    if (pdfRenderer.LastRenderDpi < fileMinDpi)
+                        fileMinDpi = pdfRenderer.LastRenderDpi;
                     using var encoderParams = new EncoderParameters(1);
                     using var qualityParam = new EncoderParameter(Encoder.Quality, (long)settings.JpegQuality);
                     encoderParams.Param[0] = qualityParam;
@@ -146,8 +150,12 @@ public class ConversionService : IDisposable
                 fileStopwatch.Stop();
                 fileTimes.Add(fileStopwatch.Elapsed);
                 completedFiles++;
-                
-                ReportFileCompleted(pdfFile, "Success");
+
+                // Если страницы-гиганты уронили DPI — честно пишем в статус
+                string doneMessage = fileMinDpi < settings.RenderDpi
+                    ? $"Success (DPI {fileMinDpi} вместо {settings.RenderDpi}: страницы слишком большие)"
+                    : "Success";
+                ReportFileCompleted(pdfFile, doneMessage);
             }
             catch (OperationCanceledException)
             {

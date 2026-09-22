@@ -7,10 +7,17 @@ namespace PDF2CBZ.Services;
 
 public class PdfRenderer : IDisposable
 {
+    // Потолок битмапа: выше Pdfium/GDI+ либо молча чернит, либо падает.
+    // Замерено: 226 Мп ещё рендерится, 300+ Мп — ошибка/чёрный экран.
+    private const long MaxRenderPixels = 150_000_000;
+
     private PdfDocument? _document;
     private bool _disposed;
 
     public int PageCount => _document?.PageCount ?? 0;
+
+    // Фактический DPI последнего рендера (может быть ниже запрошенного)
+    public int LastRenderDpi { get; private set; } = 150;
 
     public void Load(string pdfPath)
     {
@@ -30,11 +37,25 @@ public class PdfRenderer : IDisposable
         if (pageIndex < 0 || pageIndex >= _document.PageCount)
             throw new ArgumentOutOfRangeException(nameof(pageIndex));
 
+        // ВАЖНО: width/height здесь — пункты (1/72 дюйма), библиотека сама
+        // умножает на dpi/72. Передача готовых пикселей давала двойное
+        // масштабирование и чёрные страницы на больших DPI.
         var pageSize = _document.PageSizes[pageIndex];
-        var width = (int)Math.Round(pageSize.Width / 72.0 * dpi);
-        var height = (int)Math.Round(pageSize.Height / 72.0 * dpi);
+        var width = Math.Max(1, (int)Math.Round(pageSize.Width));
+        var height = Math.Max(1, (int)Math.Round(pageSize.Height));
 
-        return (Bitmap)_document.Render(pageIndex, width, height, dpi, dpi, PdfRotation.Rotate0, PdfRenderFlags.CorrectFromDpi);
+        // Страховка: честный размер в пикселях, при превышении снижаем DPI
+        long honestPixels = (long)Math.Round(pageSize.Width * dpi / 72.0)
+                          * (long)Math.Round(pageSize.Height * dpi / 72.0);
+        int actualDpi = dpi;
+        if (honestPixels > MaxRenderPixels)
+        {
+            double scale = Math.Sqrt((double)MaxRenderPixels / honestPixels);
+            actualDpi = Math.Max(72, (int)(dpi * scale));
+        }
+        LastRenderDpi = actualDpi;
+
+        return (Bitmap)_document.Render(pageIndex, width, height, actualDpi, actualDpi, PdfRotation.Rotate0, PdfRenderFlags.CorrectFromDpi);
     }
 
     private static readonly ImageCodecInfo JpegEncoder = GetEncoder(ImageFormat.Jpeg);
