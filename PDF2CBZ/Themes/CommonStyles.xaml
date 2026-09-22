@@ -247,10 +247,11 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <ToggleButton x:Name="ToggleButton"
-                                      Grid.ColumnSpan="2"
-                                      Background="{TemplateBinding Background}"
-                                      BorderBrush="{TemplateBinding BorderBrush}"
-                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                       Grid.ColumnSpan="2"
+                                       Background="{TemplateBinding Background}"
+                                       BorderBrush="{TemplateBinding BorderBrush}"
+                                       BorderThickness="{TemplateBinding BorderThickness}"
+                                       Foreground="{TemplateBinding Foreground}"
                                       IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                       Padding="{TemplateBinding Padding}"
                                       SnapsToDevicePixels="True"
@@ -313,7 +314,7 @@
                             </ToggleButton.Template>
                         </ToggleButton>
                         <Popup x:Name="PART_Popup"
-                               AllowsTransparency="False"
+                               AllowsTransparency="True"
                                StaysOpen="True"
                                Focusable="False"
                                Grid.ColumnSpan="2"

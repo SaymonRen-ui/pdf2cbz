@@ -126,7 +126,10 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="📄" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <Path Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,8,0"
+                                            Stretch="Uniform" Fill="Transparent"
+                                            Stroke="{DynamicResource TextSecondaryBrush}" StrokeThickness="1.6"
+                                            Data="M4,1 H11 L15,5 V15 H4 Z M11,1 V5 H15"/>
                                     <TextBlock Grid.Column="1" Text="{Binding FileName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                                Foreground="{DynamicResource TextPrimaryBrush}"/>
                                     <TextBlock Grid.Column="2" Text="{Binding PageCount, StringFormat='{}{0} стр.'}" 
@@ -197,7 +200,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="DPI рендера:" 
                             VerticalAlignment="Center" Margin="0,8,12,0"
                             Foreground="{DynamicResource TextPrimaryBrush}"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="DpiComboBox" HorizontalAlignment="Left" Width="120"
+                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="DpiComboBox" HorizontalAlignment="Left" Width="90"
                           VerticalAlignment="Center" Margin="0,8,0,0"
                           SelectionChanged="DpiComboBox_SelectionChanged">
                     <ComboBoxItem Content="100"/>
