@@ -6,14 +6,15 @@
         xmlns:local="clr-namespace:PDF2CBZ"
         xmlns:controls="clr-namespace:PDF2CBZ.Controls"
         mc:Ignorable="d"
-        Title="PDF2CBZ" Height="700" Width="900"
-        MinHeight="620" MinWidth="700"
+        Title="PDF2CBZ" Width="900" Height="710"
+        MinHeight="600" MinWidth="700"
+        WindowStartupLocation="CenterScreen"
         WindowTitle="PDF2CBZ"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
         AllowDrop="True" Drop="Window_Drop">
     
-    <Grid Margin="16">
+    <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Список фиксированной высоты: не тянется за окном -->
@@ -24,7 +25,7 @@
         </Grid.RowDefinitions>
         
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -98,7 +99,7 @@
         </Grid>
         
         <!-- File List -->
-<GroupBox Grid.Row="1" Header="Файлы для конвертации" Margin="0,0,0,16" Padding="8"
+<GroupBox Grid.Row="1" Header="Файлы для конвертации" Margin="0,0,0,10" Padding="8"
                   Style="{StaticResource ModernGroupBoxStyle}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -108,7 +109,7 @@
                 
                 <Grid>
                     <ListBox x:Name="FilesListBox"
-                             Height="180"
+                             Height="140"
                              SelectionMode="Extended"
                              AllowDrop="True"
                              Drop="FilesListBox_Drop"
@@ -156,7 +157,7 @@
         </GroupBox>
         
         <!-- Settings -->
-        <GroupBox Grid.Row="2" Header="Настройки" Margin="0,0,0,16" Padding="8"
+        <GroupBox Grid.Row="2" Header="Настройки" Margin="0,0,0,10" Padding="8"
                   Style="{StaticResource ModernGroupBoxStyle}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -211,7 +212,7 @@
         </GroupBox>
         
         <!-- Progress -->
-        <GroupBox Grid.Row="3" Header="Прогресс" Margin="0,0,0,16" Padding="8"
+        <GroupBox Grid.Row="3" Header="Прогресс" Margin="0,0,0,10" Padding="8"
                   Style="{StaticResource ModernGroupBoxStyle}">
             <Grid>
                 <Grid.RowDefinitions>
