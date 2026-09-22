@@ -19,12 +19,16 @@ public class CbzCreator : IDisposable
         _completed = false;
     }
 
+    // JPEG уже сжат — deflate почти ничего не выигрывает, только жрёт CPU.
+    // Стандарт для CBZ — Store (без сжатия): быстрее в разы, размер +доли %.
+    private const CompressionLevel PageCompression = CompressionLevel.NoCompression;
+
     public void AddPage(string pageFileName, byte[] imageData)
     {
         if (_archive == null)
             throw new InvalidOperationException("CBZ archive not created");
 
-        var entry = _archive.CreateEntry(pageFileName, CompressionLevel.Optimal);
+        var entry = _archive.CreateEntry(pageFileName, PageCompression);
         using var entryStream = entry.Open();
         entryStream.Write(imageData, 0, imageData.Length);
     }
@@ -34,7 +38,7 @@ public class CbzCreator : IDisposable
         if (_archive == null)
             throw new InvalidOperationException("CBZ archive not created");
 
-        var entry = _archive.CreateEntry(pageFileName, CompressionLevel.Optimal);
+        var entry = _archive.CreateEntry(pageFileName, PageCompression);
         using var entryStream = entry.Open();
         using var fileStream = new FileStream(imageFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         fileStream.CopyTo(entryStream);

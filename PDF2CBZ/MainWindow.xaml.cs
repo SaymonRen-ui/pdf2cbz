@@ -92,7 +92,7 @@ public partial class MainWindow : CustomWindow
         EmptyStateText.Visibility = _files.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private void AddFiles_Click(object sender, RoutedEventArgs e)
+    private async void AddFiles_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
@@ -103,34 +103,61 @@ public partial class MainWindow : CustomWindow
 
         if (dialog.ShowDialog() == true)
         {
-            foreach (var file in dialog.FileNames)
-            {
-                AddFile(file);
-            }
-            UpdateStartButtonState();
+            await AddFilesAsync(dialog.FileNames);
         }
     }
 
-    private void AddFile(string filePath)
+    // Чтение числа страниц идёт в фоне — толстые тома не морозят окно
+    private async Task AddFilesAsync(IEnumerable<string> filePaths)
     {
-        if (_files.Any(f => f.FilePath.Equals(filePath, StringComparison.OrdinalIgnoreCase)))
+        var newPaths = filePaths
+            .Where(f => f.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+            .Where(f => !_files.Any(x => x.FilePath.Equals(f, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+
+        if (newPaths.Count == 0)
             return;
+
+        FilesListBox.IsEnabled = false;
+        OverallProgressText.Text = "Читаю файлы…";
 
         try
         {
-            using var renderer = new PdfRenderer();
-            renderer.Load(filePath);
-            _files.Add(new PdfFileInfo
+            foreach (var filePath in newPaths)
             {
-                FilePath = filePath,
-                FileName = Path.GetFileName(filePath),
-                PageCount = renderer.PageCount
-            });
+                int pages;
+                try
+                {
+                    pages = await Task.Run(() =>
+                    {
+                        using var renderer = new PdfRenderer();
+                        renderer.Load(filePath);
+                        return renderer.PageCount;
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Не удалось добавить файл {Path.GetFileName(filePath)}:\n{ex.Message}",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    continue;
+                }
+
+                _files.Add(new PdfFileInfo
+                {
+                    FilePath = filePath,
+                    FileName = Path.GetFileName(filePath),
+                    PageCount = pages
+                });
+            }
         }
-        catch (Exception ex)
+        finally
         {
-            MessageBox.Show($"Не удалось добавить файл {Path.GetFileName(filePath)}:\n{ex.Message}", 
-                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Не включаем список обратно посреди конвертации
+            if (_cancellationTokenSource == null)
+                FilesListBox.IsEnabled = true;
+            OverallProgressText.Text = "Готов к работе";
+            UpdateStartButtonState();
+            UpdateFileCount();
         }
     }
 
@@ -151,17 +178,12 @@ public partial class MainWindow : CustomWindow
         UpdateFileCount();
     }
 
-    private void Window_Drop(object sender, DragEventArgs e)
+    private async void Window_Drop(object sender, DragEventArgs e)
     {
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-            foreach (var file in files.Where(f => f.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)))
-            {
-                AddFile(file);
-            }
-            UpdateStartButtonState();
-            UpdateFileCount();
+            await AddFilesAsync(files);
         }
     }
 
@@ -184,17 +206,12 @@ public partial class MainWindow : CustomWindow
         FilesListBox_DragEnter(sender, e);
     }
 
-    private void FilesListBox_Drop(object sender, DragEventArgs e)
+    private async void FilesListBox_Drop(object sender, DragEventArgs e)
     {
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             var files = (string[])e.Data.GetData(DataFormats.FileDrop)!;
-            foreach (var file in files.Where(f => f.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)))
-            {
-                AddFile(file);
-            }
-            UpdateStartButtonState();
-            UpdateFileCount();
+            await AddFilesAsync(files);
         }
     }
 
@@ -226,6 +243,16 @@ public partial class MainWindow : CustomWindow
         if (_settings == null || QualityValueText == null) return;
         _settings.JpegQuality = (int)Math.Round(e.NewValue);
         QualityValueText.Text = _settings.JpegQuality.ToString();
+    }
+
+    private void DpiComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_settings == null || DpiComboBox == null) return;
+        if (DpiComboBox.SelectedItem is ComboBoxItem item
+            && int.TryParse(item.Content?.ToString(), out int dpi))
+        {
+            _settings.RenderDpi = dpi;
+        }
     }
 
     private bool _syncingThemeMenu;
@@ -360,32 +387,12 @@ public partial class MainWindow : CustomWindow
         FilesListBox.IsEnabled = !isConverting;
         OutputPathTextBox.IsEnabled = !isConverting;
         QualitySlider.IsEnabled = !isConverting;
+        DpiComboBox.IsEnabled = !isConverting;
         ThemeButton.IsEnabled = !isConverting;
-        
-        // Disable file list buttons
-        foreach (var child in FindVisualChildren<Button>(this))
-        {
-            if (child.Content is string text && (text == "Добавить PDF" || text == "Удалить" || text == "Очистить список" || text == "Обзор..."))
-            {
-                child.IsEnabled = !isConverting;
-            }
-        }
-    }
-
-    private IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
-    {
-        if (depObj != null)
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-            {
-                DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-                if (child is T t)
-                    yield return t;
-
-                foreach (T childOfChild in FindVisualChildren<T>(child))
-                    yield return childOfChild;
-            }
-        }
+        AddFilesButton.IsEnabled = !isConverting;
+        RemoveFilesButton.IsEnabled = !isConverting;
+        ClearListButton.IsEnabled = !isConverting;
+        BrowseOutputButton.IsEnabled = !isConverting;
     }
 
     private void OnProgressChanged(ConversionProgress progress)
@@ -451,22 +458,4 @@ public partial class MainWindow : CustomWindow
             }
         });
     }
-}
-
-public class PdfFileInfo : INotifyPropertyChanged
-{
-    public string FilePath { get; set; } = string.Empty;
-    public string FileName { get; set; } = string.Empty;
-    public int PageCount { get; set; }
-    
-    private string _status = "Ожидание";
-    public string Status
-    {
-        get => _status;
-        set { _status = value; OnPropertyChanged(); }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }

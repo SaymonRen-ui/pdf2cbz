@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:PDF2CBZ"
         xmlns:controls="clr-namespace:PDF2CBZ.Controls"
         mc:Ignorable="d"
-        Title="PDF2CBZ" Height="600" Width="900"
-        MinHeight="500" MinWidth="700"
+        Title="PDF2CBZ" Height="700" Width="900"
+        MinHeight="620" MinWidth="700"
         WindowTitle="PDF2CBZ"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
@@ -16,7 +16,8 @@
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <!-- Список фиксированной высоты: не тянется за окном -->
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -106,7 +107,8 @@
                 </Grid.RowDefinitions>
                 
                 <Grid>
-                    <ListBox x:Name="FilesListBox" 
+                    <ListBox x:Name="FilesListBox"
+                             Height="180"
                              SelectionMode="Extended"
                              AllowDrop="True"
                              Drop="FilesListBox_Drop"
@@ -143,11 +145,11 @@
                                Visibility="Collapsed"/>
                 </Grid>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,0" HorizontalAlignment="Right">
-                    <Button Content="Добавить PDF" Style="{StaticResource SecondaryButtonStyle}" 
+                    <Button x:Name="AddFilesButton" Content="Добавить PDF" Style="{StaticResource SecondaryButtonStyle}" 
                             Click="AddFiles_Click" Padding="12,6" Margin="0,0,8,0"/>
-                    <Button Content="Удалить" Style="{StaticResource DangerButtonStyle}" 
+                    <Button x:Name="RemoveFilesButton" Content="Удалить" Style="{StaticResource DangerButtonStyle}" 
                             Click="RemoveFiles_Click" Padding="12,6" Margin="0,0,8,0"/>
-                    <Button Content="Очистить список" Style="{StaticResource SecondaryButtonStyle}" 
+                    <Button x:Name="ClearListButton" Content="Очистить список" Style="{StaticResource SecondaryButtonStyle}" 
                             Click="ClearList_Click" Padding="12,6"/>
                 </StackPanel>
             </Grid>
@@ -165,6 +167,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Папка назначения:" 
@@ -175,7 +178,7 @@
                          Padding="{StaticResource SmallControlPadding}"
                          Style="{StaticResource ModernTextBoxStyle}"
                          TextChanged="OutputPathTextBox_TextChanged"/>
-                <Button Grid.Row="0" Grid.Column="2" Content="Обзор..." Style="{StaticResource SecondaryButtonStyle}" 
+                <Button Grid.Row="0" Grid.Column="2" x:Name="BrowseOutputButton" Content="Обзор..." Style="{StaticResource SecondaryButtonStyle}" 
                         Click="BrowseOutput_Click" Padding="12,4" Margin="0,0,0,8"/>
                 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="JPEG Quality:" 
@@ -187,8 +190,23 @@
                         Style="{StaticResource ModernSliderStyle}"
                         ValueChanged="QualitySlider_ValueChanged"/>
                 <TextBlock Grid.Row="1" Grid.Column="2" x:Name="QualityValueText" Text="90" 
-                            VerticalAlignment="Center" FontWeight="{StaticResource FontWeightSemiBold}" Width="36" TextAlignment="Right"
+                             VerticalAlignment="Center" FontWeight="{StaticResource FontWeightSemiBold}" Width="36" TextAlignment="Right"
+                             Foreground="{DynamicResource TextPrimaryBrush}"/>
+                
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="DPI рендера:" 
+                            VerticalAlignment="Center" Margin="0,8,12,0"
                             Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="DpiComboBox" HorizontalAlignment="Left" Width="120"
+                          VerticalAlignment="Center" Margin="0,8,0,0"
+                          SelectionChanged="DpiComboBox_SelectionChanged">
+                    <ComboBoxItem Content="100"/>
+                    <ComboBoxItem Content="150" IsSelected="True"/>
+                    <ComboBoxItem Content="200"/>
+                    <ComboBoxItem Content="300"/>
+                </ComboBox>
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="выше = чётче и тяжелее" 
+                             VerticalAlignment="Center" FontSize="{StaticResource FontSizeSmall}"
+                             Foreground="{DynamicResource TextTertiaryBrush}"/>
             </Grid>
         </GroupBox>
         

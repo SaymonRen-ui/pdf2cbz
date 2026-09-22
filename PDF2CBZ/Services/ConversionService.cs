@@ -128,7 +128,7 @@ public class ConversionService : IDisposable
 
                     string pageFileName = FileNameHelper.GetPageFileName(page + 1, pageCount);
 
-                    using var bitmap = pdfRenderer.RenderPage(page);
+                    using var bitmap = pdfRenderer.RenderPage(page, settings.RenderDpi);
                     using var encoderParams = new EncoderParameters(1);
                     using var qualityParam = new EncoderParameter(Encoder.Quality, (long)settings.JpegQuality);
                     encoderParams.Param[0] = qualityParam;
