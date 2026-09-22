@@ -49,8 +49,24 @@ public partial class MainWindow : CustomWindow
         ThemeManager.ApplyThemeToWindow(this, ThemeManager.Instance.IsDark);
     }
 
+    private void FitToWorkArea()
+    {
+        // Центрируем по рабочей области (без таскбара), чтобы низ
+        // с кнопками не уходил под него на маленьких экранах.
+        // Вызывается один раз при старте — дальше окно можно двигать и тянуть свободно.
+        var area = SystemParameters.WorkArea;
+        MaxWidth = area.Width;
+        MaxHeight = area.Height;
+        if (Width > area.Width) Width = area.Width;
+        if (Height > area.Height) Height = area.Height;
+        Left = area.Left + Math.Max(0, (area.Width - Width) / 2);
+        Top = area.Top + Math.Max(0, (area.Height - Height) / 2);
+    }
+
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
+        FitToWorkArea();
+
         // Apply DWM title bar theme (Dark/Light)
         ThemeManager.ApplyThemeToWindow(this, ThemeManager.Instance.IsDark);
 
